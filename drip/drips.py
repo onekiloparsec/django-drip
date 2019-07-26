@@ -8,7 +8,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.db.models import Q
 from django.template import Context, Template
 from django.utils.html import strip_tags
-from django.utils.importlib import import_module
+from django.utils.module_loading import import_module
 
 from drip.models import SentDrip
 

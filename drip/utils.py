@@ -2,7 +2,9 @@ import sys
 
 from django.db import models
 from django.db.models import ForeignKey, ManyToManyField, OneToOneField
-from django.db.models.related import RelatedObject
+# from django.db.models.related import ForeignObjectRel
+from django.db.models.fields.related import ForeignObjectRel
+from django.apps import apps
 
 # taking a nod from python-requests and skipping six
 _ver = sys.version_info
@@ -21,7 +23,7 @@ def get_fields(Model,
     """
     Given a Model, return a list of lists of strings with important stuff:
     ...
-    ['test_user__user__customuser', 'customuser', 'User', 'RelatedObject']
+    ['test_user__user__customuser', 'customuser', 'User', 'ForeignObjectRel']
     ['test_user__unique_id', 'unique_id', 'TestUser', 'CharField']
     ['test_user__confirmed', 'confirmed', 'TestUser', 'BooleanField']
     ...
@@ -35,9 +37,15 @@ def get_fields(Model,
     # github.com/omab/python-social-auth/commit/d8637cec02422374e4102231488481170dc51057
     if isinstance(Model, basestring):
         app_label, model_name = Model.split('.')
-        Model = models.get_model(app_label, model_name)
+        Model = apps.get_model(app_label, model_name)
 
-    fields = Model._meta.fields + Model._meta.many_to_many + Model._meta.get_all_related_objects()
+    all_related_objects = [
+        f for f in Model._meta.get_fields()
+        if (f.one_to_many or f.one_to_one)
+           and f.auto_created and not f.concrete
+    ]
+
+    fields = Model._meta.fields + Model._meta.many_to_many + tuple(all_related_objects)
     model_stack.append(Model)
 
     # do a variety of checks to ensure recursion isnt being redundant
@@ -62,7 +70,7 @@ def get_fields(Model,
     for field in fields:
         field_name = field.name
 
-        if isinstance(field, RelatedObject):
+        if isinstance(field, ForeignObjectRel):
             field_name = field.field.related_query_name()
 
         if parent_field:
@@ -77,13 +85,13 @@ def get_fields(Model,
         out_fields.append([full_field, field_name, Model, field.__class__])
 
         if (not stop_recursion and
-            (isinstance(field, ForeignKey) or isinstance(field, OneToOneField) or
-                isinstance(field, RelatedObject) or isinstance(field, ManyToManyField))):
+                (isinstance(field, ForeignKey) or isinstance(field, OneToOneField) or
+                 isinstance(field, ForeignObjectRel) or isinstance(field, ManyToManyField))):
 
-            if isinstance(field, RelatedObject):
+            if isinstance(field, ForeignObjectRel):
                 RelModel = field.model
             else:
-                RelModel = field.related.parent_model
+                RelModel = field.related_model
 
             out_fields.extend(get_fields(RelModel, full_field, list(model_stack)))
 
