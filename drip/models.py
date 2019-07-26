@@ -9,6 +9,9 @@ from drip.timedelta_helper import parse
 
 
 class Drip(models.Model):
+    class Meta:
+        app_label = 'drip'
+
     date = models.DateTimeField(auto_now_add=True)
     lastchanged = models.DateTimeField(auto_now=True)
 
@@ -50,12 +53,18 @@ class Drip(models.Model):
 
 
 class SentDrip(models.Model):
+    class Meta:
+        app_label = 'drip'
+
     """
     Keeps a record of all sent drips.
     """
     date = models.DateTimeField(auto_now_add=True)
 
-    drip = models.ForeignKey('drip.Drip', related_name='sent_drips')
+    drip = models.ForeignKey('drip.Drip',
+                             related_name='sent_drips',
+                             on_delete=models.CASCADE)
+
     user = models.ForeignKey(get_user_model(),
                              related_name='sent_drips',
                              on_delete=models.CASCADE)
@@ -94,10 +103,13 @@ LOOKUP_TYPES = (
 
 
 class QuerySetRule(models.Model):
+    class Meta:
+        app_label = 'drip'
+
     date = models.DateTimeField(auto_now_add=True)
     lastchanged = models.DateTimeField(auto_now=True)
 
-    drip = models.ForeignKey(Drip, related_name='queryset_rules')
+    drip = models.ForeignKey(Drip, related_name='queryset_rules', on_delete=models.CASCADE)
 
     method_type = models.CharField(max_length=12, default='filter', choices=METHOD_TYPES)
     field_name = models.CharField(max_length=128, verbose_name='Field name of User')

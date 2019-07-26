@@ -4,9 +4,9 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import resolve, reverse
 from django.test import TestCase
 from django.test.client import RequestFactory
+from django.urls import reverse, resolve
 from django.utils import timezone
 
 from drip.drips import DripBase, DripMessage
@@ -280,9 +280,9 @@ class DripsTestCase(TestCase):
         # then get it's admin view.
         rf = RequestFactory()
         timeline_url = reverse('admin:drip_timeline', kwargs={
-                                    'drip_id': model_drip.id,
-                                    'into_past': 3,
-                                    'into_future': 3})
+            'drip_id': model_drip.id,
+            'into_past': 3,
+            'into_future': 3})
 
         request = rf.get(timeline_url)
         request.user = admin
