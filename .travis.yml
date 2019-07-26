@@ -4,16 +4,18 @@ language: python
 
 env:
   - TOXENV=flake8
-  - TOXENV=py27-1.4
-  - TOXENV=py27-1.5
-  - TOXENV=py27-1.6
-  - TOXENV=py27-1.7
-  - TOXENV=py33-1.5
-  - TOXENV=py33-1.6
-  - TOXENV=py33-1.7
-  - TOXENV=py34-1.5
-  - TOXENV=py34-1.6
-  - TOXENV=py34-1.7
+  - TOXENV=py27-django111
+  - TOXENV=py27-django20
+  - TOXENV=py27-django21
+  - TOXENV=py27-django22
+  - TOXENV=py36-django111
+  - TOXENV=py36-django20
+  - TOXENV=py36-django21
+  - TOXENV=py36-django22
+  - TOXENV=py37-django111
+  - TOXENV=py37-django20
+  - TOXENV=py37-django21
+  - TOXENV=py37-django22
 
 install:
   - pip install tox coveralls
