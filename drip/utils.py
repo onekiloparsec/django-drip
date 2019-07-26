@@ -1,8 +1,6 @@
 import sys
 
-from django.db import models
 from django.db.models import ForeignKey, ManyToManyField, OneToOneField
-# from django.db.models.related import ForeignObjectRel
 from django.db.models.fields.related import ForeignObjectRel
 from django.apps import apps
 
@@ -41,8 +39,7 @@ def get_fields(Model,
 
     all_related_objects = [
         f for f in Model._meta.get_fields()
-        if (f.one_to_many or f.one_to_one)
-           and f.auto_created and not f.concrete
+        if (f.one_to_many or f.one_to_one) and f.auto_created and not f.concrete
     ]
 
     fields = Model._meta.fields + Model._meta.many_to_many + tuple(all_related_objects)

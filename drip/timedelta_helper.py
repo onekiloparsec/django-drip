@@ -7,7 +7,11 @@ from decimal import Decimal
 from django.utils import six
 
 STRFDATETIME = re.compile('([dgGhHis])')
-STRFDATETIME_REPL = lambda x: '%%(%s)s' % x.group()
+
+
+def STRFDATETIME_REPL(x):
+    return '%%(%s)s' % x.group()
+
 
 def nice_repr(timedelta, display="long", sep=", "):
     """
@@ -144,7 +148,7 @@ def iso8601_repr(timedelta, format=None):
             ('M', minutes),
             ('S', seconds),
         )),
-      )
+    )
 
     result = []
     for category, subcats in formatting:
@@ -156,6 +160,7 @@ def iso8601_repr(timedelta, format=None):
         result = result[:-1]
 
     return "".join(result)
+
 
 def parse(string):
     """
@@ -288,17 +293,17 @@ def parse(string):
     else:
         # This is the more flexible format
         d = re.match(
-                     r'^((?P<weeks>-?((\d*\.\d+)|\d+))\W*w((ee)?(k(s)?)?)(,)?\W*)?'
-                     r'((?P<days>-?((\d*\.\d+)|\d+))\W*d(ay(s)?)?(,)?\W*)?'
-                     r'((?P<hours>-?((\d*\.\d+)|\d+))\W*h(ou)?(r(s)?)?(,)?\W*)?'
-                     r'((?P<minutes>-?((\d*\.\d+)|\d+))\W*m(in(ute)?(s)?)?(,)?\W*)?'
-                     r'((?P<seconds>-?((\d*\.\d+)|\d+))\W*s(ec(ond)?(s)?)?)?\W*$',
-                     six.text_type(string))
+            r'^((?P<weeks>-?((\d*\.\d+)|\d+))\W*w((ee)?(k(s)?)?)(,)?\W*)?'
+            r'((?P<days>-?((\d*\.\d+)|\d+))\W*d(ay(s)?)?(,)?\W*)?'
+            r'((?P<hours>-?((\d*\.\d+)|\d+))\W*h(ou)?(r(s)?)?(,)?\W*)?'
+            r'((?P<minutes>-?((\d*\.\d+)|\d+))\W*m(in(ute)?(s)?)?(,)?\W*)?'
+            r'((?P<seconds>-?((\d*\.\d+)|\d+))\W*s(ec(ond)?(s)?)?)?\W*$',
+            six.text_type(string))
         if not d:
             raise TypeError("'%s' is not a valid time interval" % string)
         d = d.groupdict(0)
 
-    return datetime.timedelta(**dict(( (k, float(v)) for k,v in d.items())))
+    return datetime.timedelta(**dict(((k, float(v)) for k, v in d.items())))
 
 
 def divide(obj1, obj2, as_float=False):
@@ -345,6 +350,7 @@ def divide(obj1, obj2, as_float=False):
             secs = float(secs)
         return datetime.timedelta(seconds=secs)
 
+
 def modulo(obj1, obj2):
     """
     Allows for remainder division of timedelta by timedelta or integer.
@@ -376,6 +382,7 @@ def modulo(obj1, obj2):
     else:
         return datetime.timedelta(seconds=(sec1 % obj2))
 
+
 def percentage(obj1, obj2):
     """
     What percentage of obj2 is obj1? We want the answer as a float.
@@ -388,6 +395,7 @@ def percentage(obj1, obj2):
     assert isinstance(obj2, datetime.timedelta), "Second argument must be a timedelta."
 
     return divide(obj1 * 100, obj2, as_float=True)
+
 
 def decimal_percentage(obj1, obj2):
     """
@@ -491,7 +499,8 @@ def round_to_nearest(obj, timedelta):
     TODO: test with tzinfo (non-naive) datetimes/times.
     """
 
-    assert isinstance(obj, (datetime.datetime, datetime.timedelta, datetime.time)), "First argument must be datetime, time or timedelta."
+    assert isinstance(obj, (
+        datetime.datetime, datetime.timedelta, datetime.time)), "First argument must be datetime, time or timedelta."
     assert isinstance(timedelta, datetime.timedelta), "Second argument must be a timedelta."
 
     time_only = False
@@ -522,15 +531,17 @@ def round_to_nearest(obj, timedelta):
     else:
         return result
 
+
 def decimal_hours(timedelta, decimal_places=None):
     """
     Return a decimal value of the number of hours that this timedelta
     object refers to.
     """
-    hours = Decimal(timedelta.days*24) + Decimal(timedelta.seconds) / 3600
+    hours = Decimal(timedelta.days * 24) + Decimal(timedelta.seconds) / 3600
     if decimal_places:
-        return hours.quantize(Decimal(str(10**-decimal_places)))
+        return hours.quantize(Decimal(str(10 ** -decimal_places)))
     return hours
+
 
 def week_containing(date):
     if date.weekday():
@@ -538,8 +549,9 @@ def week_containing(date):
 
     return date, date + datetime.timedelta(6)
 
+
 try:
-    datetime.timedelta().total_seconds
+    # datetime.timedelta().total_seconds
     def total_seconds(timedelta):
         return timedelta.total_seconds()
 except AttributeError:
@@ -551,4 +563,5 @@ except AttributeError:
 
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod()
