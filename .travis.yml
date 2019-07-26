@@ -21,6 +21,7 @@ matrix:
 
 install:
   - pip install tox tox-travis coveralls
+  - pip install -q -e .
 
 script:
   - tox
