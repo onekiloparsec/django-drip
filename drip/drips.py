@@ -3,6 +3,7 @@ import logging
 import operator
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.core.mail import EmailMultiAlternatives
 from django.db.models import Q
 from django.template import Context, Template
@@ -10,7 +11,6 @@ from django.utils.html import strip_tags
 from django.utils.importlib import import_module
 
 from drip.models import SentDrip
-from drip.utils import get_user_model
 
 try:
     from django.utils.timezone import now as conditional_now

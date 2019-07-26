@@ -3,12 +3,13 @@ import json
 from django import forms
 from django.conf.urls import url
 from django.contrib import admin
+from django.contrib.auth import get_user_model
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 
 from drip.drips import configured_message_classes, message_class_for
 from drip.models import Drip, QuerySetRule, SentDrip
-from drip.utils import get_simple_fields, get_user_model
+from drip.utils import get_simple_fields
 
 
 class QuerySetRuleInline(admin.TabularInline):

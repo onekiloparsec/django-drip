@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.core import mail
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import resolve, reverse
@@ -10,7 +11,7 @@ from django.utils import timezone
 
 from drip.drips import DripBase, DripMessage
 from drip.models import Drip, QuerySetRule, SentDrip
-from drip.utils import get_user_model, unicode
+from drip.utils import unicode
 
 from .models import Profile
 

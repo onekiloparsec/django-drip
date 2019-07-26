@@ -3,8 +3,8 @@ from datetime import datetime
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.contrib.auth import get_user_model
 
-from drip.utils import get_user_model
 from drip.timedelta_helper import parse
 
 
@@ -56,7 +56,9 @@ class SentDrip(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
     drip = models.ForeignKey('drip.Drip', related_name='sent_drips')
-    user = models.ForeignKey(getattr(settings, 'AUTH_USER_MODEL', 'auth.User'), related_name='sent_drips')
+    user = models.ForeignKey(get_user_model(),
+                             related_name='sent_drips',
+                             on_delete=models.CASCADE)
 
     subject = models.TextField()
     body = models.TextField()
